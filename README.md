@@ -1,2 +1,2 @@
 # S.A.M.I.E.
-Sentient artificially made intelligent entity
+Sentient artificially made intelligent entiy
