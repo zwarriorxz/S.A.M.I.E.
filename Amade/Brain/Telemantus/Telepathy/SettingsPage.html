@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chat UI</title>
+  <style>
+    html, body {
+  overflow: hidden; /* Prevent global scroll */
+  height: 100%;
+}
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #1e1e1e;
+      color: white;
+    }
+
+.top-bar {
+  position: fixed; /* <-- Fixes it to top */
+  top: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to bottom, #2c2c2c, #1e1e1e);
+  height: 60px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 15px;
+  z-index: 1000;
+}
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      background: silver;
+      border-radius: 50%;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    #avatar-input {
+      display: none;
+    }
+
+    .top-menu {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .top-menu span,
+    .top-menu .info-icon {
+      background: #555;
+      padding: 6px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+.top-menu .info-icon {
+  background: #555;          
+  width: 5px;             
+  height: 16px;
+  display: flex;          
+  align-items: center;
+  justify-content: center;
+  border-radius: 100px;
+  color: Black;
+}
+
+    .page-title {
+      position: absolute;
+      right: 20px;
+      font-weight: bold;
+      background: #444;
+      padding: 10px 20px;
+      border-radius: 20px;
+      color: white;
+      font-size: 26px;
+    }
+
+    .center-avatar {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .side-tabs,
+    .side-tabs-right {
+      position: fixed;
+      top: 60px;
+      width: 14px;
+      height: calc(100% - 60px);
+      background: #555;
+    }
+
+    .side-tabs {
+      left: 0;
+      clip-path: polygon(0 0, 100% 10px, 100% calc(100% - 10px), 0 100%);
+    }
+
+    .side-tabs-right {
+      right: 0;
+      clip-path: polygon(100% 0, 0 10px, 0 calc(100% - 10px), 100% 100%);
+    }
+
+  </style>
+</head>
+
+<body>
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <!-- Left side menu -->
+    <div class="top-menu">
+      <span>Home</span>
+      <span>Settings</span>
+      <span class = "Chat-icon">Chat</span>
+      <div class="info-icon">i</div>
+    </div>
+
+    <!-- Centered Avatar -->
+    <label for="avatar-input" class="avatar center-avatar">
+      <img id="avatar" src="" alt="">
+    </label>
+
+    <!-- Right side title -->
+    <div class="page-title">CHAT</div>
+  </div>
+
+  <!-- Hidden input for avatar -->
+  <input type="file" id="avatar-input" accept="image/*">
+
+  <!-- Side Tabs -->
+  <div class="side-tabs"></div>
+  <div class="side-tabs-right"></div>
+
+
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript to handle image upload -->
+  <script>
+const input = document.getElementById('avatar-input');
+  const img = document.getElementById('avatar');
+
+  input.addEventListener('change', function () {
+    const file = this.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Handle sending message on Enter
+  const textInput = document.querySelector('.input-container input[type="text"]');
+  const chatArea = document.querySelector('.chat-area');
+
+  textInput.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && this.value.trim() !== '') {
+      const messageText = this.value;
+      const messageDiv = document.createElement('div');
+      messageDiv.classList.add('message', 'user');
+      messageDiv.innerHTML = `${messageText} <span class="timestamp">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>`;
+
+      chatArea.appendChild(messageDiv);
+      chatArea.appendChild(document.createElement('div')).className = 'bubble';
+      chatArea.scrollTop = chatArea.scrollHeight;
+
+      this.value = '';
+    }
+  });
+
+  // Toggle button active state
+  const controlButtons = document.querySelectorAll('.control-button');
+  controlButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      button.classList.toggle('active');
+    });
+  });
+
+  // Redirect info page
+  const infoIcon = document.querySelector('.Chat-icon');
+  infoIcon.addEventListener('click', () => {
+    window.location.href = 'ChatPage.html'; // change to your actual info page
+  });
+  </script>
+</body>
+
+</html>

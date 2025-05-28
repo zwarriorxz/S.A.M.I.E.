@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MaidAiChatBox</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #343541;
+            color: white;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 0;
+            background-color: #3c3d4a;
+            overflow-x: hidden;
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+            color: white;
+        }
+        .sidebar.open {
+            width: 250px;
+        }
+        .sidebar-content {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar h2 {
+            margin-top: 0;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .sidebar-button {
+            background-color: #555768;
+            border: none;
+            color: white;
+            padding: 12px 20px;
+            margin-bottom: 10px;
+            text-align: left;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.2s;
+        }
+        .sidebar-button:hover {
+            background-color: #666873;
+        }
+
+        /* Slit */
+        .sidebar-slit {
+            width: 20px;
+            background-color: #555768;
+            cursor: pointer;
+        }
+
+        /* Chat sections */
+        .main-content {
+            flex: 1;
+            display: flex;
+        }
+
+        .chat-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #555768;
+        }
+        .chat-section:last-child {
+            border-right: none;
+        }
+
+        .chat-header {
+            padding: 10px;
+            background-color: transparent;
+            text-align: center;
+        }
+        .chat-header .header-bubble {
+            display: inline-block;
+            background-color: #444654;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-size: 18px;
+        }
+
+        .chat-container {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .message {
+            margin-bottom: 20px;
+        }
+        .message.user {
+            text-align: right;
+        }
+        .message-text {
+            display: inline-block;
+            padding: 10px 15px;
+            border-radius: 10px;
+            max-width: 70%;
+        }
+        .message.user .message-text {
+            background-color: #19c37d;
+            color: black;
+        }
+        .message.bot .message-text {
+            background-color: #444654;
+        }
+
+        .input-container {
+            padding: 15px;
+            background-color: #40414f;
+            display: flex;
+            align-items: center;
+            border: none;
+            border-radius: 16px;
+        }
+        .input-container input {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            margin-right: 10px;
+            background-color: #555768;
+            color: #19c37d;
+            font-size: 18px;
+        }
+        .input-container button {
+            padding: 15px 25px;
+            background-color: #19c37d;
+            color: black;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 18px;
+            margin-right: 10px;
+        }
+        .input-container button:hover {
+            background-color: #13a56c;
+        }
+
+        /* Settings Popup */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .popup {
+            background-color: #343541;
+            border-radius: 10px;
+            padding: 20px;
+            width: 400px;
+            max-width: 90%;
+        }
+        .popup-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .popup-header .header-bubble {
+            display: inline-block;
+            background-color: #444654;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-size: 20px;
+        }
+        .setting-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 24px;
+        }
+        .toggle-switch input {
+            display: none;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #19c37d;
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .close-button {
+            background-color: #19c37d;
+            border: none;
+            color: black;
+            padding: 10px 20px;
+            margin-top: 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            font-weight: bold;
+        }
+        .close-button:hover {
+            background-color: #13a56c;
+        }
+        /* Custom Scrollbar */
+        .chat-container::-webkit-scrollbar {
+            width: 8px;
+            overflow-y: auto;
+        }
+
+        .chat-container::-webkit-scrollbar-track {
+            background: #d3d3d3; /* light gray */
+            border-radius: 4px;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb {
+            background-color: #19c37d; /* green */
+            border-radius: 4px;
+            border: 2px solid transparent;
+            background-clip: content-box;
+        }
+
+        /* Firefox Support */
+        .chat-container {
+            scrollbar-width: thin;
+            scrollbar-color: #19c37d #343541;
+        }
+        #videoCanvas {
+            display: none; /* Initially hidden */
+            border: 2px solid #333;
+            margin-bottom: 20px;
+            position: absolute;  /* Make it absolute */
+            top: 10px;          /* Position at the top */
+            right: 10px;        /* Position at the right */
+            max-width: 320px;      /* Make it smaller (adjust as needed) */
+            height: auto;
+            z-index: 10;          /* Ensure it's above other elements if needed */
+            background-color: rgba(0, 0, 0, 0.8); /* Optional: Semi-transparent background */
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-content">
+        <h2>Menu</h2>
+        <button class="sidebar-button" onclick="openSettings()">Settings</button>
+        <button class="sidebar-button" onclick="closeMaid()">Close Maid</button>
+    </div>
+</div>
+<div class="sidebar-slit" onclick="toggleSidebar()"></div>
+
+<div class="popup-overlay" id="settingsPopup">
+    <div class="popup">
+        <div class="popup-header">
+            <div class="header-bubble">Settings</div>
+        </div>
+
+        <div class="setting-option">
+            Start on PC startup
+            <label class="toggle-switch">
+                <input type="checkbox" id="startupToggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="setting-option">
+            Show "What She's Thinking"
+            <label class="toggle-switch">
+                <input type="checkbox" id="thinkingToggle" checked onchange="toggleThinkingSection()">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="setting-option">
+            Testing
+            <label class="toggle-switch">
+                <input type="checkbox" id="testingToggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+
+        <button class="close-button" onclick="closeSettings()">Close</button>
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="chat-section">
+        <div class="chat-header">
+            <div class="header-bubble">Chatbox</div>
+        </div>
+        <div class="chat-container" id="chat1">
+            <div class="message bot">
+                <div class="message-text">Hello! How can I help you today?</div>
+            </div>
+        </div>
+        <div class="input-container">
+            <input type="text" id="userInput1" placeholder="Type your message..." onkeydown="handleKey(event, 'chat1', 'userInput1')">
+            <button onclick="sendMessage('chat1', 'userInput1')">➤</button>
+            <button id="videocall">📷</button>
+        </div>
+    </div>
+
+    <div class="chat-section" id="thinkingSection" style="display: flex;">
+        <div class="chat-header">
+            <div class="header-bubble">What She's Thinking</div>
+            <canvas id="videoCanvas"></canvas>
+        </div>
+        <div class="chat-container" id="chat2">
+            <div class="message bot">
+                <div class="message-text">Hi there! Need anything?</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let mediaStream;
+    let videoPopup;
+    let sendingFrames = false;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const videoCallButton = document.getElementById('videocall');
+        videoCallButton.addEventListener('click', toggleVideoPopup);
+    });
+
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.classList.toggle('open');
+    }
+
+    function openSettings() {
+        document.getElementById('settingsPopup').style.display = 'flex';
+    }
+
+    function closeSettings() {
+        document.getElementById('settingsPopup').style.display = 'none';
+    }
+
+    function toggleThinkingSection() {
+        const thinkingSection = document.getElementById('thinkingSection');
+        const thinkingToggle = document.getElementById('thinkingToggle');
+        thinkingSection.style.display = thinkingToggle.checked ? 'flex' : 'none';
+    }
+
+    function handleKey(event, chatId, inputId) {
+        if (event.key === 'Enter') {
+            sendMessage(chatId, inputId);
+        }
+    }
+
+    // Restore saved chat history
+    document.addEventListener('DOMContentLoaded', () => {
+        ['chat1', 'chat2'].forEach(chatId => {
+            const chat = document.getElementById(chatId);
+            const saved = localStorage.getItem(chatId);
+            if (saved) chat.innerHTML = saved;
+        });
+
+        // Auto-focus the first input
+        document.getElementById('userInput1').focus();
+    });
+
+    function sendMessage(chatId, inputId) {
+        const input = document.getElementById(inputId);
+        const chat = document.getElementById(chatId);
+        const message = input.value; // keep as-is, allow spaces
+
+        // Optionally, remove this check if you want full freedom
+        // if (!message) return;
+
+        const userMsg = document.createElement('div');
+        userMsg.className = 'message user';
+        userMsg.innerHTML = `<div class="message-text">${message}</div>`;
+        chat.appendChild(userMsg);
+        chat.scrollTo({ top: chat.scrollHeight, behavior: 'smooth' });
+
+        input.value = '';
+
+        const typing = document.createElement('div');
+        typing.className = 'message bot';
+        typing.innerHTML = `<div class="message-text">↻</div>`;
+        chat.appendChild(typing);
+        chat.scrollTo({ top: chat.scrollHeight, behavior: 'smooth' });
+
+        fetch('http://localhost:5000/submit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: message })
+        })
+            .then(res => res.text())
+            .then(reply => {
+                chat.removeChild(typing);
+                const botMsg = document.createElement('div');
+                botMsg.className = 'message bot';
+                botMsg.innerHTML = `<div class="message-text">${reply}</div>`;
+                chat.appendChild(botMsg);
+                chat.scrollTo({ top: chat.scrollHeight, behavior: 'smooth' });
+                localStorage.setItem(chatId, chat.innerHTML);
+            })
+
+    }
+
+    function closeMaid() {
+        close();
+    }
+
+    const captureButton = document.getElementById('videocall');
+    const videoCanvas = document.getElementById('videoCanvas');
+    const messageArea = document.getElementById('messageArea');
+    const context = videoCanvas.getContext('2d');
+
+    let isCapturing = false;
+    let intervalId = null;
+
+    async function startCapture() {
+        try {
+            mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+            const videoElement = document.createElement('video');
+            videoElement.srcObject = mediaStream;
+            videoElement.onloadedmetadata = () => {
+                videoElement.play();
+                videoCanvas.width = videoElement.videoWidth / 2;  // Half the original width
+                videoCanvas.height = videoElement.videoHeight / 2; // Half the original height
+
+            };
+
+            videoCanvas.style.display = 'block'; // Show the canvas
+
+            intervalId = setInterval(() => {
+                context.drawImage(videoElement, 0, 0, videoCanvas.width, videoCanvas.height);
+                // No need to send image data here, just draw on canvas
+            }, 1000 / 12); // 12 FPS
+
+            captureButton.textContent = 'Stop Capture';
+            isCapturing = true;
+            // Send a request to the backend to start capturing
+            const response = await fetch('http://localhost:3000/start_capture', { method: 'POST' });
+        } catch (error) {
+            console.error('Error starting capture:', error);
+        }
+    }
+
+    function stopCapture() {
+        if (mediaStream) {
+            mediaStream.getTracks().forEach(track => track.stop());
+        }
+        clearInterval(intervalId);
+        videoCanvas.style.display = 'none'; // Hide the canvas
+        captureButton.textContent = 'Start Capture';
+        isCapturing = false;
+        // Send a request to the backend to stop capturing
+        fetch('http://localhost:3000/stop_capture', { method: 'POST' })
+    }
+
+    function toggleVideoPopup() {
+        if (isCapturing) {
+            stopCapture();
+        } else {
+            startCapture();
+        }
+    }
+
+</script>
+
+</body>
+</html>
