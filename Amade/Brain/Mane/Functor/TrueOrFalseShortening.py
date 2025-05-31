@@ -5,4 +5,3 @@ def Tof(bool1):
         return False 
     else
        return "Invalid input"
-Tof(input())
