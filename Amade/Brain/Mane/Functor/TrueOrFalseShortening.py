@@ -4,4 +4,4 @@ def Tof(bool1):
     elif bool1.lower() == "f":
         return False 
     else
-       return "Invalid input"
+       raise ValueError("Invalid input")
