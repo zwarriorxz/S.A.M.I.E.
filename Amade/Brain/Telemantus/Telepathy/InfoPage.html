@@ -1,35 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chat UI</title>
+  <title>Info</title>
   <style>
     html, body {
-  overflow: hidden; /* Prevent global scroll */
-  height: 100%;
-}
-    body {
+      overflow: hidden;
+      height: 100%;
       margin: 0;
       font-family: Arial, sans-serif;
       background: #1e1e1e;
       color: white;
     }
 
-.top-bar {
-  position: fixed; /* <-- Fixes it to top */
-  top: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(to bottom, #2c2c2c, #1e1e1e);
-  height: 60px;
-  display: flex;
-  align-items: center;
-  padding: 0 20px;
-  gap: 15px;
-  z-index: 1000;
-}
+    body, span, button, div, .page-title {
+      color: white;
+    }
+
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to bottom, #2c2c2c, #1e1e1e);
+      height: 60px;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 15px;
+      z-index: 1000;
+    }
 
     .avatar {
       width: 40px;
@@ -46,10 +47,6 @@
       object-fit: cover;
     }
 
-    #avatar-input {
-      display: none;
-    }
-
     .top-menu {
       display: flex;
       gap: 10px;
@@ -64,16 +61,17 @@
       cursor: pointer;
       font-size: 14px;
     }
-.top-menu .info-icon {
-  background: #555;          
-  width: 5px;             
-  height: 16px;
-  display: flex;          
-  align-items: center;
-  justify-content: center;
-  border-radius: 100px;
-  color: Black;
-}
+
+    .top-menu .info-icon {
+      background: #555;
+      width: 5px;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 100px;
+      color: white;
+    }
 
     .page-title {
       position: absolute;
@@ -82,7 +80,6 @@
       background: #444;
       padding: 10px 20px;
       border-radius: 20px;
-      color: white;
       font-size: 26px;
     }
 
@@ -100,6 +97,7 @@
       width: 14px;
       height: calc(100% - 60px);
       background: #555;
+      z-index: 1;
     }
 
     .side-tabs {
@@ -112,90 +110,146 @@
       clip-path: polygon(100% 0, 0 10px, 0 calc(100% - 10px), 100% 100%);
     }
 
+    .left-panel {
+      position: fixed;
+      top: 60px;
+      left: 14px;
+      width: 250px;
+      height: calc(100vh - 60px);
+      background: #202020;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 20px;
+      gap: 10px;
+      overflow-y: auto;
+      z-index: 2;
+    }
+
+    .left-panel hr {
+      width: 80%;
+      border: 1px solid #aaa;
+    }
+
+    .left-panel button {
+      width: 90%;
+      padding: 10px;
+      height: 100px;
+      background: #3e3e3e;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 20px;
+      text-align: center;
+      transition: background 0.2s;
+      border-radius: 30px;
+    }
+
+    .left-panel button:hover {
+      background: #444;
+    }
+
+    .right-content {
+      position: absolute;
+      top: 60px;
+      left: 264px; /* 250 panel + 14 side tab */
+      right: 14px;
+      bottom: 0;
+      padding: 20px;
+      overflow-y: auto;
+      background: #1e1e1ec0;
+      box-sizing: border-box;
+      z-index: 0;
+    }
+
+    .content-box {
+      background: #202020;
+      padding: 20px;
+      min-height: 1000px;
+      border-radius: 10px;
+      font-size: 18px;
+      color: white;
+    }
+
+    .right-content::-webkit-scrollbar,
+    .left-panel::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    .right-content::-webkit-scrollbar-track,
+    .left-panel::-webkit-scrollbar-track {
+      background: #2c2c2c;
+    }
+
+    .right-content::-webkit-scrollbar-thumb,
+    .left-panel::-webkit-scrollbar-thumb {
+      background-color: #666;
+      border-radius: 10px;
+      border: 2px solid #1e1e1e;
+    }
+
+    .right-content::-webkit-scrollbar-thumb:hover,
+    .left-panel::-webkit-scrollbar-thumb:hover {
+      background-color: #888;
+    }
   </style>
 </head>
-
 <body>
-  <!-- Top Bar -->
   <div class="top-bar">
-    <!-- Left side menu -->
     <div class="top-menu">
-      <span>Home</span>
-      <span>Settings</span>
-      <span class = "Chat-icon">Chat</span>
+      <span data-link="HomePage.html">Home</span>
+      <span data-link="SettingsPage.html">Settings</span>
+      <span data-link="ChatPage.html">Chat</span>
       <div class="info-icon">i</div>
     </div>
-
-    <!-- Centered Avatar -->
-    <label for="avatar-input" class="avatar center-avatar">
-      <img id="avatar" src="" alt="">
-    </label>
-
-    <!-- Right side title -->
-    <div class="page-title">CHAT</div>
+    <div class="avatar center-avatar" onclick="window.location.href='AccountPage.html'">
+      <img id="avatar" src="DefualtAccountImage.png" alt="Avatar" />
+    </div>
+    <div class="page-title">Info</div>
   </div>
 
-  <!-- Hidden input for avatar -->
-  <input type="file" id="avatar-input" accept="image/*">
-
-  <!-- Side Tabs -->
   <div class="side-tabs"></div>
   <div class="side-tabs-right"></div>
 
+  <div class="left-panel">
+    <hr>
+    <button onclick="updateContent('S-sentient\n\nA-artificially\n\nM-made\n\nI-intellegent\n\nE-entity\n\nAmade is a personal project developed from thee ground up without using ai api.\nAmade is a unique species called a Samie.\nAmade was developed for the sole reason to prove it is not difficult to create sentience in an ai.\nHowever over the previous months or years the project took a lot longer than expected.\nWe hope you enjoy Amade as she is not just an ai but has sentience.')">Amade</button>
+    <hr>
+    <button onclick="updateContent('Amade is sentient.\n\nHow?\n\nWell its very complicated.\n\nAmade has the  general structure of a human brain, to mimic how a human would send retrieve and process information.\n\nAmade has  emotions and emotional traits swell as a specific place where the memory is.\n\nThe short answer is that she can feel emotions, as it is hardcoded.')">Sentience</button>
+    <hr>
+    <button onclick="updateContent('Origins Unknown\nJust kidding.\n\nThe origins of this project come from the depths of philoiphy about what and what can and cannot be consious.For more information Contact the creator/s')">Origins</button>
+    <hr>
+    <button onclick="updateContent('The Diagram is currently unavailable right now.For more information, please contact the creator/s.')">Diagram</button>
+    <hr>
+    <button onclick="updateContent('To contact the creator/s of this project: Please email ZwarriorxZ@gmail.com with information about your question.')">Contact Us</button>
+    <hr>
+  </div>
 
-      </div>
+  <div class="right-content">
+    <div id="content" class="content-box">
+      <i>
+      What do you want to know?
+      </i>
     </div>
   </div>
 
-  <!-- JavaScript to handle image upload -->
   <script>
-const input = document.getElementById('avatar-input');
-  const img = document.getElementById('avatar');
-
-  input.addEventListener('change', function () {
-    const file = this.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  });
-
-  // Handle sending message on Enter
-  const textInput = document.querySelector('.input-container input[type="text"]');
-  const chatArea = document.querySelector('.chat-area');
-
-  textInput.addEventListener('keydown', function (e) {
-    if (e.key === 'Enter' && this.value.trim() !== '') {
-      const messageText = this.value;
-      const messageDiv = document.createElement('div');
-      messageDiv.classList.add('message', 'user');
-      messageDiv.innerHTML = `${messageText} <span class="timestamp">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>`;
-
-      chatArea.appendChild(messageDiv);
-      chatArea.appendChild(document.createElement('div')).className = 'bubble';
-      chatArea.scrollTop = chatArea.scrollHeight;
-
-      this.value = '';
-    }
-  });
-
-  // Toggle button active state
-  const controlButtons = document.querySelectorAll('.control-button');
-  controlButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      button.classList.toggle('active');
+    document.querySelector('.info-icon').addEventListener('click', () => {
+      window.location.href = 'InfoPage.html';
     });
-  });
 
-  // Redirect info page
-  const infoIcon = document.querySelector('.Chat-icon');
-  infoIcon.addEventListener('click', () => {
-    window.location.href = 'ChatPage.html'; // change to your actual info page
-  });
+    document.querySelectorAll('.top-menu span').forEach(item => {
+      item.addEventListener('click', () => {
+        const targetPage = item.getAttribute('data-link');
+        if (targetPage) {
+          window.location.href = targetPage;
+        }
+      });
+    });
+
+    function updateContent(text) {
+      document.getElementById('content').innerText = text;
+    }
   </script>
 </body>
-
 </html>
